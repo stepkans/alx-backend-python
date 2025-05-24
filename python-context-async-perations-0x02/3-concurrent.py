@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """
-Concurrent asynchronous database queries using aiosqlite and asyncio.
+Concurrent asynchronous database queries using aiosqlite and asyncio,
+with returned results.
 """
 
 import aiosqlite
@@ -16,9 +17,7 @@ async def async_fetch_users():
         cursor = await db.execute("SELECT * FROM users")
         users = await cursor.fetchall()
         await cursor.close()
-        print("All users:")
-        for user in users:
-            print(user)
+        return users
 
 
 async def async_fetch_older_users():
@@ -27,17 +26,24 @@ async def async_fetch_older_users():
         cursor = await db.execute("SELECT * FROM users WHERE age > ?", (40,))
         older_users = await cursor.fetchall()
         await cursor.close()
-        print("Users older than 40:")
-        for user in older_users:
-            print(user)
+        return older_users
 
 
 async def fetch_concurrently():
-    """Run both fetch functions concurrently."""
-    await asyncio.gather(
+    """Run both fetch functions concurrently and return results."""
+    all_users, older_users = await asyncio.gather(
         async_fetch_users(),
         async_fetch_older_users()
     )
+
+    # Now you can use the returned data
+    print("All users:")
+    for user in all_users:
+        print(user)
+
+    print("\nUsers older than 40:")
+    for user in older_users:
+        print(user)
 
 
 if __name__ == "__main__":
