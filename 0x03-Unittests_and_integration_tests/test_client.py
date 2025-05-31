@@ -6,6 +6,7 @@ from typing import Callable, Mapping
 from fixtures import TEST_PAYLOAD
 from unittest.mock import patch, PropertyMock
 import unittest
+import utils
 
 
 class TestGithubOrgClient(unittest.TestCase):
