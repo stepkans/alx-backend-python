@@ -6,8 +6,9 @@ from typing import Callable, Mapping
 from fixtures import TEST_PAYLOAD
 from unittest.mock import patch, PropertyMock
 import unittest
-import utils, fixtures, client
-
+import utils
+import fixtures
+import client
 
 class TestGithubOrgClient(unittest.TestCase):
     """ Class to test GithubOrgClient model """
