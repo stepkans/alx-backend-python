@@ -41,7 +41,7 @@ class TestGithubOrgClient(unittest.TestCase):
 
     @patch("client.get_json", return_value=[{"name": "alx"}])
     def test_public_repos(self, mock_get_json: Callable):
-        """test that GithubOrgClient.public_repos returns the correct value."""
+        """test that GithubOrgClient.public_repos returns correct value."""
         with patch.object(GithubOrgClient, "_public_repos_url",
                           return_value="https://api.github.com/orgs/abc",
                           new_callable=PropertyMock) as mock_public_repos_url:
@@ -99,6 +99,37 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
         result = git_hub_org.public_repos("apache-2.0")
         self.assertEqual(result, self.apache2_repos)
 
+class TestGithubOrgClient(unittest.TestCase):
+    @patch('client.get_json')
+    @patch('client.GithubOrgClient.org', new_callable=PropertyMock)
+    def test_public_repos(self, mock_org, mock_get_json):
+        # Fixtures
+        mock_org.return_value = {"repos_url": "http://api.github.com/orgs/test/repos"}
+        payload = [
+            {"name": "repo1"},
+            {"name": "repo2"},
+            {"name": "repo3"},
+        ]
+        mock_get_json.return_value = payload
+
+        client = GithubOrgClient("test")
+        self.assertEqual(client.public_repos(), ["repo1", "repo2", "repo3"])
+        mock_get_json.assert_called_once_with("http://api.github.com/orgs/test/repos")
+
+    @patch('client.get_json')
+    @patch('client.GithubOrgClient.org', new_callable=PropertyMock)
+    def test_public_repos_with_license(self, mock_org, mock_get_json):
+        # Fixtures
+        mock_org.return_value = {"repos_url": "http://api.github.com/orgs/test/repos"}
+        payload = [
+            {"name": "repo1", "license": {"key": "apache-2.0"}},
+            {"name": "repo2", "license": {"key": "mit"}},
+            {"name": "repo3", "license": None},
+        ]
+        mock_get_json.return_value = payload
+
+        client = GithubOrgClient("test")
+        self.assertEqual(client.public_repos(license="apache-2.0"), ["repo1"])
 
 if __name__ == "__main__":
     unittest.main()
