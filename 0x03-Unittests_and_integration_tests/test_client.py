@@ -10,6 +10,7 @@ import utils
 import fixtures
 import client
 
+
 class TestGithubOrgClient(unittest.TestCase):
     """ Class to test GithubOrgClient model """
 
