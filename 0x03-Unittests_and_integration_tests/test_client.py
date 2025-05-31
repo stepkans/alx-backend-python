@@ -3,6 +3,7 @@
 from parameterized import parameterized, parameterized_class
 from client import GithubOrgClient
 from typing import Callable, Mapping
+from typing import Mapping
 from fixtures import TEST_PAYLOAD
 from unittest.mock import patch, PropertyMock
 import unittest
@@ -13,7 +14,11 @@ import client
 
 class TestGithubOrgClient(unittest.TestCase):
     """ Class to test GithubOrgClient model """
-
+    
+    @staticmethod
+    def has_license(repo, license_key):
+        return repo.get("license", {}).get("key") == license_key
+    
     @parameterized.expand([
         ("google", {"payload": True}),
         ("abc", {"payload": False}),
