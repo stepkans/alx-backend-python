@@ -99,9 +99,10 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
         result = git_hub_org.public_repos("apache-2.0")
         self.assertEqual(result, self.apache2_repos)
 
+
 class TestGithubOrgClient(unittest.TestCase):
     """Test the GithubOrgClient.public_repos method based on fixtures."""
-    
+
     @patch('client.get_json')
     @patch('client.GithubOrgClient.org', new_callable=PropertyMock)
     def test_public_repos(self, mock_org, mock_get_json):
@@ -126,9 +127,9 @@ class TestGithubOrgClient(unittest.TestCase):
     def test_public_repos_with_license(self, mock_org, mock_get_json):
         """Test the public_repos method with license & mock"""
         # Fixtures
-        mock_org.return_value = {"repos_url": 
-            "http://api.github.com/orgs/test/repos"
-            }
+        mock_org.return_value = {
+            "repos_url": "http://api.github.com/orgs/test/repos"
+        }
         payload = [
             {"name": "repo1", "license": {"key": "apache-2.0"}},
             {"name": "repo2", "license": {"key": "mit"}},
