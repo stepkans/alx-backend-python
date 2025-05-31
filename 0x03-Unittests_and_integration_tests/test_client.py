@@ -105,10 +105,10 @@ class TestGithubOrgClient(unittest.TestCase):
     @patch('client.get_json')
     @patch('client.GithubOrgClient.org', new_callable=PropertyMock)
     def test_public_repos(self, mock_org, mock_get_json):
+        """Test the public_repos method with mock"""
         # Fixtures
-        mock_org.return_value = {"repos_url": 
-            "http://api.github.com/orgs/test/repos"
-            }
+        repos_url = "http://api.github.com/orgs/test/repos"
+        mock_org.return_value = {"repos_url": repos_url}
         payload = [
             {"name": "repo1"},
             {"name": "repo2"},
@@ -118,13 +118,13 @@ class TestGithubOrgClient(unittest.TestCase):
 
         client = GithubOrgClient("test")
         self.assertEqual(client.public_repos(), ["repo1", "repo2", "repo3"])
-        mock_get_json.assert_called_once_with(
-            "http://api.github.com/orgs/test/repos"
-            )
+        url = "http://api.github.com/orgs/test/repos"
+        mock_get_json.assert_called_once_with(url)
 
     @patch('client.get_json')
     @patch('client.GithubOrgClient.org', new_callable=PropertyMock)
     def test_public_repos_with_license(self, mock_org, mock_get_json):
+        """Test the public_repos method with license & mock"""
         # Fixtures
         mock_org.return_value = {"repos_url": 
             "http://api.github.com/orgs/test/repos"
