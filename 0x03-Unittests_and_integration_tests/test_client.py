@@ -14,11 +14,11 @@ import client
 
 class TestGithubOrgClient(unittest.TestCase):
     """ Class to test GithubOrgClient model """
-    
+
     @staticmethod
     def has_license(repo, license_key):
         return repo.get("license", {}).get("key") == license_key
-    
+
     @parameterized.expand([
         ("google", {"payload": True}),
         ("abc", {"payload": False}),
@@ -65,7 +65,8 @@ class TestGithubOrgClient(unittest.TestCase):
     ])
     def test_has_license(self, repo, license_key, result):
         """Test that has_license returns expected result"""
-        self.assertEqual(GithubOrgClient.has_license(repo, license_key), result)
+        res = GithubOrgClient.has_license(repo, license_key)
+        self.assertEqual(res, result)
 
 
 @parameterized_class(('org_payload', 'repos_payload', 'expected_repos',
