@@ -30,6 +30,8 @@ class MessageViewSet(viewsets.ModelViewSet):
     queryset = Message.objects.all()
     permission_classes = [permissions.IsAuthenticated, IsParticipantOfConversation]
     filter_backends = [filters.DjangoFilterBackend]
+    pagination_class = CustomMessagePagination
+    filterset_class = MessageFilter
 
     def get_queryset(self):
         conversation_id = self.kwargs.get("conversation_pk")
