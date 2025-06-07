@@ -43,3 +43,14 @@ class MessageViewSet(viewsets.ModelViewSet):
         conversation = get_object_or_404(Conversation, conversation_id=conversation_id)
         serializer.save(sender=self.request.user, conversation=conversation)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+    
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        conversation = instance.conversation
+
+        if request.user not in conversation.participants.all():
+            return Response(
+                {"detail": "You do not have permission to delete this message."},
+                status=status.HTTP_403_FORBIDDEN  # 
+
+        return super().destroy(request, *args, **kwargs)
