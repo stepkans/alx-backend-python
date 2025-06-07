@@ -11,27 +11,35 @@ class IsOwner(permissions.BasePermission):
 
 class IsParticipantOfConversation(permissions.BasePermission):
     """
-    Custom permission:
-    - Only authenticated users can access the API.
-    - Only participants of a conversation can send, view, update, or delete messages in that conversation.
+    Custom permission that:
+    - Allows only authenticated users.
+    - Allows only participants of a conversation to view (GET) and modify (PUT, PATCH, DELETE) messages.
     """
 
     def has_permission(self, request, view):
-        # Check if the user is authenticated first
+        # Only authenticated users allowed overall
         return request.user and request.user.is_authenticated
 
     def has_object_permission(self, request, view, obj):
-        # Assuming obj is a Message or Conversation instance
-        # and it has a 'conversation' attribute or directly a list of participants.
+        # Check if user is participant of the conversation associated with the message or conversation
 
-        # Example if obj is a message:
         conversation = getattr(obj, 'conversation', None)
-
-        # If obj is a conversation itself, check participants directly
+        # If obj itself is a conversation, check participants directly
         if conversation is None and hasattr(obj, 'participants'):
             conversation = obj
 
-        if conversation:
-            # Check if user is a participant in this conversation
-            return request.user in conversation.participants.all()
-        return False    
+        if not conversation:
+            return False  # No conversation found, deny access
+
+        is_participant = request.user in conversation.participants.all()
+
+        # For read-only methods, allow only if participant
+        if request.method in permissions.SAFE_METHODS:  # GET, HEAD, OPTIONS
+            return is_participant
+
+        # For write methods (PUT, PATCH, DELETE), allow only if participant
+        if request.method in ['PUT', 'PATCH', 'DELETE', 'POST']:
+            return is_participant
+
+        # Deny by default
+        return False
