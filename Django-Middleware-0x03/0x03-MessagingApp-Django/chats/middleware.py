@@ -34,7 +34,7 @@ class RestrictAccessByTimeMiddleware:
             return HttpResponseForbidden("Access to the messaging app is restricted at this time.")
 
         return self.get_response(request)    
- 
+
     
 class OffensiveLanguageMiddleware:
     def __init__(self, get_response):
