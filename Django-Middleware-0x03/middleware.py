@@ -68,3 +68,23 @@ class OffensiveLanguageMiddleware:
         else:
             ip = request.META.get('REMOTE_ADDR')
         return ip    
+
+class RolePermissionMiddleware:
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        # Apply this middleware only to chat-related URLs
+        if request.path.startswith('/chats/'):
+            user = request.user
+
+            if not user.is_authenticated:
+                return HttpResponseForbidden("Authentication required.")
+
+            # You can adapt this based on how roles are implemented in your project
+            user_role = getattr(user, 'role', None)
+
+            if user_role not in ['admin', 'moderator']:
+                return HttpResponseForbidden("Access denied. Insufficient permissions.")
+
+        return self.get_response(request)
