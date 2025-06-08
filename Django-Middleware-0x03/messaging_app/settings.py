@@ -48,6 +48,7 @@ MIDDLEWARE = [
     'chats.middleware.OffensiveLanguageMiddleware',
     'chats.middleware.RestrictAccessByTimeMiddleware',
     'chats.middleware.RolePermissionMiddleware',
+    'chats.middleware.OffensiveLanguageMiddleware',
 ]
 
 ROOT_URLCONF = 'messaging_app.urls'
