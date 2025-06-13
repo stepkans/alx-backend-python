@@ -77,15 +77,9 @@ def unread_messages_view(request):
     unread = Message.unread.for_user(request.user)
     return render(request, "messaging/unread_messages.html", {"messages": unread})
 
-@login_required
-def unread_messages_view(request):
-    """View for retrieving unread messages for the current user."""
-    unread = Message.unread.for_user(request.user)
-    return render(request, "messaging/unread_messages.html", {"messages": unread})
 
 @login_required
 def unread_messages_view(request):
-    """View for retrieving unread messages for the current user with only necessary fields."""
-    # This queryset already utilizes .only()
-    unread = Message.unread.for_user(request.user)
+    """View for retrieving unread messages for the current user."""
+    unread = Message.unread.unread_for_user(request.user)        
     return render(request, "messaging/unread_messages.html", {"messages": unread})
