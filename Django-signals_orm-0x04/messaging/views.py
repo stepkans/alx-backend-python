@@ -76,7 +76,7 @@ def messages_for_user(request):
 def unread_messages_view(request):
     """View for retrieving unread messages for the current user with .only()."""
     # Filter first...
-    queryset = Message.objects.filter(receiver=request.user, read=False)
+    queryset = Message.unread.unread_for_user(receiver=request.user, read=False)
     # Then apply .only()
     unread = queryset.only('id', 'sender_id', 'receiver_id', 'read', 'content')
 
