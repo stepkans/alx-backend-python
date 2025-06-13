@@ -70,3 +70,9 @@ def messages_for_user(request):
         models.Q(sender=request.user) | models.Q(receiver=request.user)
     ).select_related('sender', 'receiver').prefetch_related('replies')
     return render(request, "messaging/user_messages.html", {"messages": messages})
+
+
+def unread_messages_view(request):
+    """View for retrieving unread messages for the current user."""
+    unread = Message.unread.for_user(request.user)
+    return render(request, "messaging/unread_messages.html", {"messages": unread})
