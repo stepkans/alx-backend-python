@@ -26,6 +26,15 @@ def threaded_conversations(viewed_message_id):
 
     return message
 
+def threaded_conversations(viewed_message_id):
+    """
+    Retrieve a parent message with its threaded conversations efficiently.
+    """
+    parent = Message.objects.select_related('sender', 'receiver').get(id=viewed_message_id)
+    threaded = Message.objects.filter(parent_message=parent).select_related('sender', 'receiver')
+    return renderedThreadedConversation(parent, threaded)
+
+
 def get_thread_replies(message):
     """
     Recursively retrieve all replies to a message in a threaded structure.
@@ -37,3 +46,27 @@ def get_thread_replies(message):
             'replies': get_thread_replies(reply)
         })
     return thread
+
+
+@login_required
+def create_message(request):
+    if request.method == "POST":
+        receiver = User.objects.get(id=request.POST['receiver_id'])  # or however you select the receiver
+        content = request.POST['content']
+
+        message = Message.objects.create(
+            sender=request.user,
+            receiver=receiver,
+            content=content,
+        )
+
+        return redirect("threaded_conversations", message.id)
+
+    return render(request, "messaging/create_message.html")
+
+def messages_for_user(request):
+    """View messages for the currently authenticated user."""
+    messages = Message.objects.filter(
+        models.Q(sender=request.user) | models.Q(receiver=request.user)
+    ).select_related('sender', 'receiver').prefetch_related('replies')
+    return render(request, "messaging/user_messages.html", {"messages": messages})
